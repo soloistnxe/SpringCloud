@@ -10,7 +10,7 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/inspect?serverTimezone=GMT%2B8
+    url: jdbc:mysql://localhost:3306/inspect_provider?serverTimezone=GMT%2B8
     type: com.alibaba.druid.pool.DruidDataSource
     #   数据源其他配置
     initialSize: 5
@@ -42,3 +42,13 @@ mybatis:
   mapper-locations: classpath:mybatis/mapper/*.xml
   # 指定resultType包
   type-aliases-package: com.example.inspect.entity
+logging:
+  #level 日志等级 指定命名空间的日志输出
+  level:
+    com.fishpro.log: debug
+  #file 指定输出文件的存储路径
+  #pattern 指定输出场景的日志输出格式
+  pattern:
+    file: "%d %-5level [%thread] %logger : %msg%n"
+  file:
+    name: D:/logs/inspect_provider.log

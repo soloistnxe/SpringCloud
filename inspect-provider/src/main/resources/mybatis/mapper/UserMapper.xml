@@ -10,4 +10,67 @@
           users
     </select>
 
+    <select id="findById" resultType="Users">
+        SELECT *
+        FROM
+          users
+        WHERE
+          user_id = #{userId}
+    </select>
+    <select id="findPage" resultType="Users">
+        SELECT *
+        FROM
+          users
+        WHERE
+          user_name LIKE  concat('%',#{query},'%')
+
+          limit #{start},#{limit}
+    </select>
+
+    <select id="findPageCount" resultType="Integer">
+        SELECT count(*)
+        FROM
+          users
+        WHERE
+          user_name LIKE  concat('%',#{query},'%')
+    </select>
+
+
+    <select id="findByName" resultType="Users">
+        SELECT
+            *
+        FROM
+          users
+        where
+          user_name = #{userName}
+    </select>
+
+    <update id="update" parameterType="Users">
+        UPDATE
+            users
+        SET
+            user_name=#{userName},
+            user_email = #{userEmail},
+            user_phone = #{userPhone},
+            password=#{password},
+            user_type=#{userType}
+        WHERE
+            user_id=#{userId}
+    </update>
+
+    <insert id="insert" parameterType="Users">
+        INSERT
+        INTO
+            users(user_name,user_phone,user_email,password,user_type)
+        VALUES
+            (#{userName},#{userPhone},#{userEmail},#{password},#{userType})
+    </insert>
+
+    <delete id="delete" parameterType="Integer">
+        DELETE
+        FROM
+          users
+        WHERE
+          user_id = #{userId}
+    </delete>
 </mapper>
