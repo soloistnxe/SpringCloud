@@ -153,14 +153,14 @@ public class UserService {
         try {
             boolean delete = userDao.delete(userId);
             if (delete) {
-                result.setMessage("删除成功");
-                logger.info("删除成功");
+                result.setMessage("删除用户成功");
+                logger.info("删除用户成功");
             }
         } catch (Exception e) {
             result.setSuccess(false);
             result.setCode(500);
-            result.setMessage("删除失败" + e);
-            logger.info("删除失败");
+            result.setMessage("删除用户失败" + e);
+            logger.info("删除用户失败");
         }
         return result;
     }

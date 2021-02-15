@@ -9,7 +9,7 @@ import lombok.Data;
  * @date 2021/1/6 11:34
  */
 @Data
-public class InspectionProject {
+public class InspectProject {
     /**
      * 检查项目Id
      */

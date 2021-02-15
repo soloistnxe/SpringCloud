@@ -1,17 +1,14 @@
 package com.example.inspect.controller;
 
 import com.example.inspect.common.Result;
-import com.example.inspect.entity.InspectionProject;
 import com.example.inspect.entity.Users;
 import com.example.inspect.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 @RestController()
+@RequestMapping("/user")
 public class UserController {
     @Resource
     private UserService userService;
