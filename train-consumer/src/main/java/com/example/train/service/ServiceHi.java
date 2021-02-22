@@ -1,4 +1,4 @@
-package com.example.servicefeign.service;
+package com.example.train.service;
 
 import com.example.inspect.entity.Users;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -20,7 +20,7 @@ public interface ServiceHi {
     @GetMapping("/hi/{name}")
     String sayHiFromServiceHi(@PathVariable(value = "name") String name);
 
-    @GetMapping("/find")
+    @GetMapping("/user/find")
     List<Users> findAll();
 
 

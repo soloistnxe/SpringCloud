@@ -26,6 +26,10 @@ public class UserService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    public List<Users> findAll(){
+        return userDao.findAll();
+    }
+
 
     public Result findPage(Integer pageNum, Integer pageSize, String query) {
         Result result = new Result();

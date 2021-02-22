@@ -1,4 +1,4 @@
-package com.example.servicefeign;
+package com.example.train;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

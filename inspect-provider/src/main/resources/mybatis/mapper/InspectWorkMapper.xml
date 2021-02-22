@@ -24,6 +24,13 @@
             product_type LIKE  concat('%',#{query},'%')
     </select>
 
+    <select id="findAllScore" resultType="String">
+        SELECT
+            inspect_score
+        FROM
+            inspect_work
+    </select>
+
     <insert id="insertWork" parameterType="InspectWork">
         INSERT
         INTO

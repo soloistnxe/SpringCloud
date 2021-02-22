@@ -25,7 +25,7 @@ public class InspectWorkController {
     private InspectWorkService inspectWorkService;
 
     @RequestMapping(value = "/findPage")
-    public Result findProject(@RequestParam(value="pageNum") Integer pageNum,
+    public Result findWork(@RequestParam(value="pageNum") Integer pageNum,
                               @RequestParam(value="pageSize") Integer pageSize,
                               @RequestParam(value="query") String query){
         return inspectWorkService.findPage(pageNum,pageSize,query);
