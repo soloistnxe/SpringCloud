@@ -1,6 +1,5 @@
 package com.example.train.controller;
 
-import com.example.inspect.entity.Users;
 import com.example.train.service.ServiceHi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class HelloController {
@@ -18,8 +18,8 @@ public class HelloController {
     private ServiceHi serviceHi;
 
     @GetMapping("/hi")
-    public List<Users> find() {
-        return serviceHi.findAll();
+    public Map<String, List<String>> find() {
+        return  serviceHi.findUnqualified();
     }
 
     @RequestMapping("/la")

@@ -2,6 +2,7 @@ package com.example.inspect.service;
 
 import com.example.inspect.common.Result;
 import com.example.inspect.dao.InspectWorkDao;
+import com.example.inspect.entity.AprioriMyself;
 import com.example.inspect.entity.Report;
 import com.example.inspect.utils.ReadCsvFileUtils;
 import org.rosuda.REngine.Rserve.RConnection;
@@ -24,6 +25,8 @@ import java.util.*;
 public class ReportService {
     @Resource
     private InspectWorkDao inspectWorkDao;
+    @Resource
+    private InspectWorkService inspectWorkService;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -46,17 +49,19 @@ public class ReportService {
             }
             String data = convertToPcaData(list);
             Boolean pca = Pca(data);
-            List<String[]> standardDeviations = ReadCsvFileUtils.readCsvFile("D:/PCA/standardDeviations.csv");
-            List<String[]> loadings = ReadCsvFileUtils.readCsvFile("D:/PCA/loadings.csv");
-            Report report = convertToReport(standardDeviations, loadings);
-            res.put("report", report);
-            res.put("names", names);
-            res.put("xAxis",xAxis);
-            result.setData(res);
             if (pca) {
                 result.setMessage("主成分分析正常");
+                List<String[]> standardDeviations = ReadCsvFileUtils.readCsvFile("D:/PCA/standardDeviations.csv");
+                List<String[]> loadings = ReadCsvFileUtils.readCsvFile("D:/PCA/loadings.csv");
+                Report report = convertToReport(standardDeviations, loadings);
+                res.put("report", report);
+                res.put("names", names);
+                res.put("xAxis",xAxis);
+                result.setData(res);
             } else {
-                result.setMessage("主成分分析异常，读取原有文件");
+                result.setMessage("主成分分析异常");
+                logger.error("主成分分析异常");
+                result.setCode(500);
             }
         } catch (Exception e) {
             result.setMessage("数据分析异常");
@@ -114,6 +119,7 @@ public class ReportService {
             //创建对象
             connection = new RConnection();
             connection.eval("PCA<-data.frame(" + data + ")");
+            System.out.println(data);
             connection.eval("res<-princomp(PCA, cor=TRUE) ");
             connection.eval("standardDeviations<-res$sdev");
             connection.eval("write.csv (standardDeviations, file ='D:/PCA/standardDeviations.csv',row.names =TRUE)");
@@ -181,5 +187,26 @@ public class ReportService {
             res.add(v);
         }
         return res;
+    }
+
+    public Result getRecommend(){
+        Map<String, List<String>> unqualified = inspectWorkService.unqualified();
+        Result result = new Result();
+        Map<String, Object> res = new HashMap<>();
+        AprioriMyself aprioriMyself = new AprioriMyself();
+        List<List<String>> record = new ArrayList<>();
+        Set<String> strings = unqualified.keySet();
+        for (String string : strings) {
+            List<String> list = unqualified.get(string);
+            if(!list.isEmpty())
+                record.add(list);
+        }
+        Map<String, Double> recommend = aprioriMyself.getRecommend(record);
+        res.put("recommend",recommend);
+        res.put("record",unqualified);
+        res.put("count",aprioriMyself.convertCount(aprioriMyself.getMap()));
+        res.put("frequentItems",aprioriMyself.getFrequentItemset());
+        result.setData(res);
+        return result;
     }
 }

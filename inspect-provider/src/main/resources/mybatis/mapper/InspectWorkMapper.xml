@@ -5,6 +5,15 @@
 <mapper namespace="com.example.inspect.dao.InspectWorkDao">
 
 
+    <select id="findAll" resultType="InspectWork">
+        SELECT
+            *
+        FROM
+            inspect_work
+        WHERE
+            audit_type = 1
+    </select>
+
     <select id="findPage" resultType="InspectWork">
         select
             *
@@ -29,6 +38,8 @@
             inspect_score
         FROM
             inspect_work
+        WHERE
+            audit_type = 1
     </select>
 
     <insert id="insertWork" parameterType="InspectWork">

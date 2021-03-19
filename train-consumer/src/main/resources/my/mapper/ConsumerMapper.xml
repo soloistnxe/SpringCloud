@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.train.dao.ConsumerDao">
+    <select id="findAll" resultType="Consumer">
+        SELECT
+          *
+        FROM
+          train_consumer
+    </select>
+
+    <select id="findByName" resultType="Consumer">
+        SELECT
+          *
+        FROM
+         train_consumer
+        WHERE
+          consumer_name = #{consumerName}
+    </select>
+
+    <select id="findPage" resultType="Consumer">
+        SELECT
+          *
+        FROM
+         train_consumer
+        WHERE
+         consumer_name  like concat('%',#{query},'%')
+        limit #{start},#{limit}
+    </select>
+    <select id="findPageCount" resultType="Integer">
+        SELECT
+         count(1)
+        FROM
+         train_consumer
+        WHERE
+         consumer_name  like concat('%',#{query},'%')
+    </select>
+
+    <insert id="insertConsumer" parameterType="Consumer">
+        INSERT
+        INTO
+          train_consumer(consumer_name,consumer_phone,password,consumer_company,consumer_type)
+        VALUES
+          (#{consumerName},#{consumerPhone},#{password},#{consumerCompany},#{consumerType})
+
+    </insert>
+
+    <update id="update" parameterType="Consumer">
+        UPDATE
+         train_consumer
+        SET
+         consumer_name = #{consumerName},
+         consumer_phone = #{consumerPhone},
+         password = #{password},
+         consumer_company = #{consumerCompany},
+         consumer_type = #{consumerType}
+        WHERE
+         consumer_id = #{consumerId}
+    </update>
+    <delete id="delete" parameterType="Integer">
+        DELETE
+        FROM
+          train_consumer
+        WHERE
+          consumer_id = #{consumerId}
+    </delete>
+</mapper>

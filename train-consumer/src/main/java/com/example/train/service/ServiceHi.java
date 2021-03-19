@@ -1,11 +1,12 @@
 package com.example.train.service;
 
-import com.example.inspect.entity.Users;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>一个Feign服务消费者接口</p>
@@ -20,8 +21,8 @@ public interface ServiceHi {
     @GetMapping("/hi/{name}")
     String sayHiFromServiceHi(@PathVariable(value = "name") String name);
 
-    @GetMapping("/user/find")
-    List<Users> findAll();
+    @GetMapping("/report/unqualified")
+    Map<String,List<String>> findUnqualified();
 
 
 

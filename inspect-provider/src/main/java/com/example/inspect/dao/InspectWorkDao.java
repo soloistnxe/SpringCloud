@@ -9,6 +9,8 @@ import java.util.List;
 @Mapper
 public interface InspectWorkDao {
 
+    List<InspectWork> findAll();
+
     List<String> findAllScore();
 
     List<InspectWork> findPage(Integer start, Integer limit, @Param("query") String query);

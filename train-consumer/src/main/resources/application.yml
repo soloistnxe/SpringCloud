@@ -11,7 +11,7 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/weekly?serverTimezone=GMT%2B8
+    url: jdbc:mysql://localhost:3306/train_consumer?serverTimezone=GMT%2B8
     type: com.alibaba.druid.pool.DruidDataSource
     #   数据源其他配置
     initialSize: 5
@@ -30,6 +30,23 @@ spring:
     maxPoolPreparedStatementPerConnectionSize: 20
     useGlobalDataSourceStat: true
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+mybatis:
+  # 指定全局配置文件位置
+  config-location: classpath:my/mybatis-config.xml
+  # 指定sql文件映射位置
+  mapper-locations: classpath:my/mapper/*.xml
+  # 指定resultType包
+  type-aliases-package: com.example.train.entity
+logging:
+  #level 日志等级 指定命名空间的日志输出
+  level:
+    com.fishpro.log: debug
+  #file 指定输出文件的存储路径
+  #pattern 指定输出场景的日志输出格式
+  pattern:
+    file: "%d %-5level [%thread] %logger : %msg%n"
+  file:
+    name: D:/logs/train_consumer.log
 eureka:
   client:
     serviceUrl:

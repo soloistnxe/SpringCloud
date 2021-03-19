@@ -11,10 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author soloist
@@ -79,16 +76,16 @@ public class InspectWorkService {
         return result;
     }
 
-    public Result updateWork(InspectWorkVo inspectWorkVo){
+    public Result updateWork(InspectWorkVo inspectWorkVo) {
         Result result = new Result();
         try {
             InspectWork inspectWork = convertToPo(inspectWorkVo);
             Boolean updateWork = inspectWorkDao.updateWork(inspectWork);
-            if(updateWork){
+            if (updateWork) {
                 result.setMessage("审核检查工作成功");
                 logger.info("审核检查工作成功");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setSuccess(false);
             result.setCode(500);
             result.setMessage("审核检查工作目失败" + e);
@@ -97,15 +94,15 @@ public class InspectWorkService {
         return result;
     }
 
-    public Result deleteWork(Integer workId){
+    public Result deleteWork(Integer workId) {
         Result result = new Result();
         try {
             Boolean deleteWork = inspectWorkDao.deleteWork(workId);
-            if(deleteWork){
+            if (deleteWork) {
                 result.setMessage("删除检查工作成功");
                 logger.info("删除检查工作成功");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setSuccess(false);
             result.setCode(500);
             result.setMessage("删除检查工作失败" + e);
@@ -143,18 +140,44 @@ public class InspectWorkService {
         return res;
     }
 
-    private InspectWork convertToPo(InspectWorkVo inspectWorkVo){
+    private InspectWork convertToPo(InspectWorkVo inspectWorkVo) {
         InspectWork inspectWork = new InspectWork();
         inspectWork.setWorkId(inspectWorkVo.getWorkId());
         inspectWork.setCompanyName(inspectWorkVo.getCompanyName());
         inspectWork.setProductType(inspectWorkVo.getProductType());
         inspectWork.setAuditType(inspectWorkVo.getAuditType());
         List<ScoreDetail> inspectScoreDetail = inspectWorkVo.getInspectScoreDetail();
-        String score ="";
+        String score = "";
         for (ScoreDetail scoreDetail : inspectScoreDetail) {
-            score+=scoreDetail.getProject()+":"+scoreDetail.getScore()+"#";
+            score += scoreDetail.getProject() + ":" + scoreDetail.getScore() + "#";
         }
         inspectWork.setInspectScore(score);
         return inspectWork;
+    }
+
+    public Map<String, List<String>> unqualified() {
+        Map<String, List<String>> map = new LinkedHashMap<>();
+        try {
+            List<InspectWork> all = inspectWorkDao.findAll();
+            List<InspectWorkVo> inspectWorkVoList = convertToWorkVo(all);
+            map = convert(inspectWorkVoList);
+        } catch (Exception e) {
+            logger.error("数据查询异常" + e);
+        }
+        return map;
+    }
+
+    private Map<String, List<String>> convert(List<InspectWorkVo> inspectWorkVos) {
+        Map<String, List<String>> map = new LinkedHashMap<>();
+        for (InspectWorkVo inspectWorkVo : inspectWorkVos) {
+            List<String> project = new ArrayList<>();
+            for (ScoreDetail scoreDetail : inspectWorkVo.getInspectScoreDetail()) {
+                if (scoreDetail.getScore() < 6) {
+                    project.add(scoreDetail.getProject());
+                }
+            }
+            map.put(inspectWorkVo.getCompanyName(), project);
+        }
+        return map;
     }
 }
