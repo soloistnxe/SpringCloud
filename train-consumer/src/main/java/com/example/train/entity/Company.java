@@ -23,6 +23,19 @@ public class Company {
      */
     private String companyName;
     /**
+     * 公司电话
+     */
+    private String companyPhone;
+
+    /**
+     * 公司地址
+     */
+    private String companyAddress;
+    /**
+     * 公司邮箱
+     */
+    private String companyEmail;
+    /**
      * 产品类别
      */
     private String productType;

@@ -3,14 +3,10 @@ package com.example.inspect.controller;
 import com.example.inspect.common.Result;
 import com.example.inspect.entity.InspectWork;
 import com.example.inspect.entity.vo.InspectWorkVo;
-import com.example.inspect.entity.vo.ScoreDetail;
 import com.example.inspect.service.InspectWorkService;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author soloist

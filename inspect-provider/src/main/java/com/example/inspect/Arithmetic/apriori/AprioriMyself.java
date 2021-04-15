@@ -1,6 +1,6 @@
-package com.example.inspect.entity;
+package com.example.inspect.Arithmetic.apriori;
+
 import lombok.Data;
-import lombok.Getter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -426,6 +426,7 @@ class Mymap {//自定义的map类，一个对象存放一个频繁项集以及�
         return true;//如果两个频繁项集大小相同，同时本频繁项集包含传入的频繁项集的所有元素，则表示两个频繁项集是相等的，返回为真
     }
 }
+
 class Itemcount{
     private String name;
     private int value;

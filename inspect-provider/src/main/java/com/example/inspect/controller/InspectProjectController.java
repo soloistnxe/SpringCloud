@@ -1,7 +1,6 @@
 package com.example.inspect.controller;
 
 import com.example.inspect.common.Result;
-import com.example.inspect.entity.InspectProject;
 import com.example.inspect.entity.InspectProjectType;
 import com.example.inspect.entity.vo.InspectProjectVo;
 import com.example.inspect.service.InspectProjectService;

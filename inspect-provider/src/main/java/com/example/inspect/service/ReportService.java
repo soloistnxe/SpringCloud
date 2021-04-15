@@ -1,8 +1,8 @@
 package com.example.inspect.service;
 
+import com.example.inspect.Arithmetic.apriori.AprioriMyself;
 import com.example.inspect.common.Result;
 import com.example.inspect.dao.InspectWorkDao;
-import com.example.inspect.entity.AprioriMyself;
 import com.example.inspect.entity.Report;
 import com.example.inspect.utils.ReadCsvFileUtils;
 import org.rosuda.REngine.Rserve.RConnection;
@@ -30,7 +30,7 @@ public class ReportService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public Result findScore() {
+    public Result findPCA() {
         Result result = new Result();
         Map<String, Object> res = new HashMap<>();
         try {
@@ -188,6 +188,7 @@ public class ReportService {
         }
         return res;
     }
+
 
     public Result getRecommend(){
         Map<String, List<String>> unqualified = inspectWorkService.unqualified();

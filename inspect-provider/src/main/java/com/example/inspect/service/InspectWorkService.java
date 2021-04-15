@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author soloist
@@ -54,6 +55,7 @@ public class InspectWorkService {
             result.setSuccess(false);
             result.setCode(500);
             result.setMessage("检查工作列表查询失败" + e);
+            e.printStackTrace();
             logger.error("检查工作列表查询失败" + e);
         }
         return result;
@@ -155,6 +157,10 @@ public class InspectWorkService {
         return inspectWork;
     }
 
+    /**
+     * 查询数据库中所有不合格项目的频繁项集，用于Aprior算法的分析
+     * @return
+     */
     public Map<String, List<String>> unqualified() {
         Map<String, List<String>> map = new LinkedHashMap<>();
         try {
@@ -163,6 +169,27 @@ public class InspectWorkService {
             map = convert(inspectWorkVoList);
         } catch (Exception e) {
             logger.error("数据查询异常" + e);
+        }
+        return map;
+    }
+
+    public Map<List<Double>,String > getKnnData(){
+        Map<List<Double>,String > map = new HashMap<>();
+        List<InspectWork> all = inspectWorkDao.findAll();
+        List<InspectWorkVo> inspectWorkVoList = convertToWorkVo(all);
+        List<InspectWorkVo> collect = inspectWorkVoList.stream().filter(InspectWorkVo::containUnqualified).collect(Collectors.toList());
+        System.out.println(collect.size());
+        for (InspectWorkVo inspectWorkVo : collect) {
+            List<ScoreDetail> inspectScoreDetail = inspectWorkVo.getInspectScoreDetail();
+            List<Double> sample = new ArrayList<>();
+            String tag ="";
+            for (ScoreDetail scoreDetail : inspectScoreDetail) {
+                sample.add(Double.parseDouble(scoreDetail.getScore().toString()));
+                if (scoreDetail.getScore()<6){
+                    tag+=scoreDetail.getProject()+";";
+                }
+            }
+            map.put(sample,tag);
         }
         return map;
     }

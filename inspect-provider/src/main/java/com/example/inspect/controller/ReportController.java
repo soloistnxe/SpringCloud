@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,17 +24,45 @@ public class ReportController {
     private ReportService reportService;
     @Resource
     private InspectWorkService inspectWorkService;
-    @RequestMapping("/score")
-    public Result findScore(){
-        return reportService.findScore();
+
+    /**
+     * 主成分分析
+     * @return
+     */
+    @RequestMapping("/pca")
+    public Result findPCA(){
+        return reportService.findPCA();
     }
 
+    /**
+     * 查询所有不合格项目
+     * @return
+     */
     @RequestMapping("/unqualified")
     public Map<String,List<String>> findUnqualified(){
         return inspectWorkService.unqualified();
     }
+
+    /**
+     * 推荐
+     * @return
+     */
     @RequestMapping("/recommend")
     public Result getRec(){
         return reportService.getRecommend();
+    }
+
+    /**
+     * K近邻算法推荐，还在开发中
+     * @return
+     */
+    @RequestMapping("/knn")
+    public Result map(){
+        Result result = new Result();
+        Map<String,Object> map = new HashMap<>();
+        Map<List<Double>, String> knnData = inspectWorkService.getKnnData();
+        map.put("knndata",knnData);
+        result.setData(map);
+        return result;
     }
 }

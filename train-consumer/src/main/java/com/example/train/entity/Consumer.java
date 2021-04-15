@@ -1,6 +1,7 @@
 package com.example.train.entity;
 
 import lombok.Data;
+import org.springframework.data.relational.core.sql.In;
 
 /**
  * @author soloist
@@ -31,7 +32,7 @@ public class Consumer {
     /**
      * 用户公司
      */
-    private String consumerCompany;
+    private Integer consumerCompany;
     /**
      * 用户类型 0：管理员 1：普通用户
      */
