@@ -69,6 +69,7 @@ public class QuestionService {
             questionVo.setQuestionId(questionDto.getQuestionId());
             questionVo.setQuestionName(questionDto.getQuestionName());
             questionVo.setAnswer(questionDto.getAnswer());
+            questionVo.setQuestionTypeId(questionDto.getQuestionTypeId());
             questionVo.setQuestionTypeName(questionDto.getQuestionTypeName());
             String[] split = questionDto.getQuestionOption().split("#");
             List<String> questionOption = new ArrayList<>();

@@ -18,6 +18,8 @@ public class InspectWorkVo {
 
     private String companyName;
 
+    private Integer companyId;
+
     private String productType;
 
     private List<String> detail;

@@ -1,10 +1,16 @@
 package com.example.inspect.service;
 
 import com.example.inspect.Arithmetic.apriori.AprioriMyself;
+import com.example.inspect.Arithmetic.knn.KNN;
+import com.example.inspect.Arithmetic.knn.KNNData;
 import com.example.inspect.common.Result;
 import com.example.inspect.dao.InspectWorkDao;
+import com.example.inspect.entity.InspectWork;
 import com.example.inspect.entity.Report;
+import com.example.inspect.entity.vo.InspectWorkVo;
+import com.example.inspect.entity.vo.ScoreDetail;
 import com.example.inspect.utils.ReadCsvFileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
@@ -30,7 +36,7 @@ public class ReportService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public Result findPCA() {
+    public Result getPCA() {
         Result result = new Result();
         Map<String, Object> res = new HashMap<>();
         try {
@@ -53,7 +59,7 @@ public class ReportService {
                 result.setMessage("主成分分析正常");
                 List<String[]> standardDeviations = ReadCsvFileUtils.readCsvFile("D:/PCA/standardDeviations.csv");
                 List<String[]> loadings = ReadCsvFileUtils.readCsvFile("D:/PCA/loadings.csv");
-                Report report = convertToReport(standardDeviations, loadings);
+                Report report = convertToPCAReport(standardDeviations, loadings);
                 res.put("report", report);
                 res.put("names", names);
                 res.put("xAxis",xAxis);
@@ -136,7 +142,7 @@ public class ReportService {
         return true;
     }
 
-    private Report convertToReport(List<String[]> standardDeviations, List<String[]> loadings) {
+    private Report convertToPCAReport(List<String[]> standardDeviations, List<String[]> loadings) {
         Report report = new Report();
         List<Double> list = new ArrayList<>();
         List<List<String>> formatLoading = new ArrayList<>();
@@ -190,7 +196,7 @@ public class ReportService {
     }
 
 
-    public Result getRecommend(){
+    public Result getAprioriReport(){
         Map<String, List<String>> unqualified = inspectWorkService.unqualified();
         Result result = new Result();
         Map<String, Object> res = new HashMap<>();
@@ -203,6 +209,15 @@ public class ReportService {
                 record.add(list);
         }
         Map<String, Double> recommend = aprioriMyself.getRecommend(record);
+        // 组合为RPC调用需要的格式
+        Map<String,String> rpcRecommend = new HashMap<>();
+        Set<String> set = recommend.keySet();
+        for (String s : set) {
+            String[] split = s.split("->");
+           rpcRecommend.put(split[0],split[1]) ;
+        }
+        res.put("rpcRecommend",rpcRecommend);
+        // 以下是组合为前端页面显示的操作
         res.put("recommend",recommend);
         res.put("record",unqualified);
         res.put("count",aprioriMyself.convertCount(aprioriMyself.getMap()));

@@ -27,6 +27,10 @@ public class QuestionDto {
      */
     private String answer;
     /**
+     * 题目所属类别id
+     */
+    private Integer questionTypeId;
+    /**
      * 题目所属类别
      */
     private String questionTypeName;

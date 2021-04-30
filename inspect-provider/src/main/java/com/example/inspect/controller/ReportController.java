@@ -1,5 +1,6 @@
 package com.example.inspect.controller;
 
+import com.example.inspect.Arithmetic.knn.KNNData;
 import com.example.inspect.common.Result;
 import com.example.inspect.service.InspectWorkService;
 import com.example.inspect.service.ReportService;
@@ -30,8 +31,8 @@ public class ReportController {
      * @return
      */
     @RequestMapping("/pca")
-    public Result findPCA(){
-        return reportService.findPCA();
+    public Result getPCA(){
+        return reportService.getPCA();
     }
 
     /**
@@ -47,9 +48,9 @@ public class ReportController {
      * 推荐
      * @return
      */
-    @RequestMapping("/recommend")
-    public Result getRec(){
-        return reportService.getRecommend();
+    @RequestMapping("/apriori")
+    public Result getApriori(){
+        return reportService.getAprioriReport();
     }
 
     /**
@@ -57,10 +58,11 @@ public class ReportController {
      * @return
      */
     @RequestMapping("/knn")
-    public Result map(){
+    public Result map(Integer companyId){
         Result result = new Result();
         Map<String,Object> map = new HashMap<>();
-        Map<List<Double>, String> knnData = inspectWorkService.getKnnData();
+        List<KNNData> knnData = inspectWorkService.getKnnData();
+
         map.put("knndata",knnData);
         result.setData(map);
         return result;

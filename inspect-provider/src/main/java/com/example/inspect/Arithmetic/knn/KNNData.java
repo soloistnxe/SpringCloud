@@ -1,5 +1,7 @@
 package com.example.inspect.Arithmetic.knn;
 
+import lombok.Data;
+
 import java.util.List;
 
 /**
@@ -8,6 +10,7 @@ import java.util.List;
  * @describe
  * @date 2021/3/24 11:07
  */
+@Data
 public class KNNData implements Comparable<KNNData> {
     List<Double> knnData;
     double distance;

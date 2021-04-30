@@ -1,13 +1,9 @@
 package com.example.train.controller;
 
-import com.example.train.service.ServiceHi;
+import com.example.inspect.common.Result;
+import com.example.train.service.Recommend;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Map;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class HelloController {
@@ -15,11 +11,11 @@ public class HelloController {
      * 注入服务"service-hi"的Feign客户端ServiceHi
      */
     @Autowired
-    private ServiceHi serviceHi;
+    private Recommend recommend;
 
-    @GetMapping("/hi")
-    public Map<String, List<String>> find() {
-        return  serviceHi.findUnqualified();
+    @RequestMapping("/hi")
+    public Result find(@RequestParam(value="companyId") Integer companyId) {
+        return  recommend.getRecommend(companyId);
     }
 
     @RequestMapping("/la")

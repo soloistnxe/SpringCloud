@@ -21,7 +21,7 @@
 
     <select id="findPage" resultType="QuestionDto">
         SELECT
-          a.question_id,a.question_name,a.question_option,b.question_type_name,a.answer
+          a.question_id,a.question_name,a.question_option,b.question_type_name,b.question_type_id,a.answer
         FROM
          train_question a,train_question_type b
         WHERE

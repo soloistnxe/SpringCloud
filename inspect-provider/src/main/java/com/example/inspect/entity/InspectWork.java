@@ -15,6 +15,8 @@ public class InspectWork {
 
     private String companyName;
 
+    private Integer companyId;
+
     private String productType;
 
     private String inspectScore;

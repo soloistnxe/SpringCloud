@@ -1,5 +1,6 @@
 package com.example.inspect.service;
 
+import com.example.inspect.Arithmetic.knn.KNNData;
 import com.example.inspect.common.Result;
 import com.example.inspect.dao.InspectWorkDao;
 import com.example.inspect.entity.InspectWork;
@@ -35,7 +36,7 @@ public class InspectWorkService {
         try {
             if (pageNum > 0 && pageSize > 0) {
                 inspectWorkList = inspectWorkDao.findPage((pageNum - 1) * pageSize, pageSize, query);
-                inspectWorkVoList = convertToWorkVo(inspectWorkList);
+                inspectWorkVoList = convertToWorkVoList(inspectWorkList);
             }
             Integer total = inspectWorkDao.findPageCount(query);
             if (!inspectWorkList.isEmpty()) {
@@ -113,34 +114,41 @@ public class InspectWorkService {
         return result;
     }
 
-    private List<InspectWorkVo> convertToWorkVo(List<InspectWork> inspectWorkList) {
+    private List<InspectWorkVo> convertToWorkVoList(List<InspectWork> inspectWorkList) {
         List<InspectWorkVo> res = new ArrayList<>();
         for (InspectWork inspectWork : inspectWorkList) {
-            InspectWorkVo inspectWorkVo = new InspectWorkVo();
-            inspectWorkVo.setWorkId(inspectWork.getWorkId());
-            inspectWorkVo.setCompanyName(inspectWork.getCompanyName());
-            inspectWorkVo.setProductType(inspectWork.getProductType());
-            inspectWorkVo.setAuditType(inspectWork.getAuditType());
-            String inspectScore = inspectWork.getInspectScore();
-            if (StringUtils.isNotEmpty(inspectScore)) {
-                Integer num = 0;
-                String[] split = inspectScore.split("#");
-                List<ScoreDetail> list = new ArrayList<>();
-                for (String s : split) {
-                    String[] score = s.split(":");
-                    ScoreDetail scoreDetail = new ScoreDetail();
-                    scoreDetail.setProject(score[0]);
-                    scoreDetail.setScore(Integer.parseInt(score[1]));
-                    num += Integer.parseInt(score[1]);
-                    list.add(scoreDetail);
-                }
-                inspectWorkVo.setInspectScoreDetail(list);
-                inspectWorkVo.setScore(num);
-            }
+            InspectWorkVo inspectWorkVo = convertToWorkVo(inspectWork);
             res.add(inspectWorkVo);
         }
         return res;
     }
+
+    private InspectWorkVo convertToWorkVo(InspectWork inspectWork) {
+        InspectWorkVo inspectWorkVo = new InspectWorkVo();
+        inspectWorkVo.setWorkId(inspectWork.getWorkId());
+        inspectWorkVo.setCompanyName(inspectWork.getCompanyName());
+        inspectWorkVo.setCompanyId(inspectWork.getCompanyId());
+        inspectWorkVo.setProductType(inspectWork.getProductType());
+        inspectWorkVo.setAuditType(inspectWork.getAuditType());
+        String inspectScore = inspectWork.getInspectScore();
+        if (StringUtils.isNotEmpty(inspectScore)) {
+            Integer num = 0;
+            String[] split = inspectScore.split("#");
+            List<ScoreDetail> list = new ArrayList<>();
+            for (String s : split) {
+                String[] score = s.split(":");
+                ScoreDetail scoreDetail = new ScoreDetail();
+                scoreDetail.setProject(score[0]);
+                scoreDetail.setScore(Integer.parseInt(score[1]));
+                num += Integer.parseInt(score[1]);
+                list.add(scoreDetail);
+            }
+            inspectWorkVo.setInspectScoreDetail(list);
+            inspectWorkVo.setScore(num);
+        }
+        return inspectWorkVo;
+    }
+
 
     private InspectWork convertToPo(InspectWorkVo inspectWorkVo) {
         InspectWork inspectWork = new InspectWork();
@@ -165,18 +173,19 @@ public class InspectWorkService {
         Map<String, List<String>> map = new LinkedHashMap<>();
         try {
             List<InspectWork> all = inspectWorkDao.findAll();
-            List<InspectWorkVo> inspectWorkVoList = convertToWorkVo(all);
-            map = convert(inspectWorkVoList);
+            List<InspectWorkVo> inspectWorkVoList = convertToWorkVoList(all);
+            map = convertToAprioriMap(inspectWorkVoList);
         } catch (Exception e) {
             logger.error("数据查询异常" + e);
         }
         return map;
     }
 
-    public Map<List<Double>,String > getKnnData(){
-        Map<List<Double>,String > map = new HashMap<>();
+    public List<KNNData> getKnnData(){
+        List<KNNData> knnDataList = new ArrayList<>();
         List<InspectWork> all = inspectWorkDao.findAll();
-        List<InspectWorkVo> inspectWorkVoList = convertToWorkVo(all);
+        List<InspectWorkVo> inspectWorkVoList = convertToWorkVoList(all);
+        // 试用stream新写法
         List<InspectWorkVo> collect = inspectWorkVoList.stream().filter(InspectWorkVo::containUnqualified).collect(Collectors.toList());
         System.out.println(collect.size());
         for (InspectWorkVo inspectWorkVo : collect) {
@@ -189,12 +198,12 @@ public class InspectWorkService {
                     tag+=scoreDetail.getProject()+";";
                 }
             }
-            map.put(sample,tag);
+            knnDataList.add(new KNNData(sample,tag));
         }
-        return map;
+        return knnDataList;
     }
 
-    private Map<String, List<String>> convert(List<InspectWorkVo> inspectWorkVos) {
+    private Map<String, List<String>> convertToAprioriMap(List<InspectWorkVo> inspectWorkVos) {
         Map<String, List<String>> map = new LinkedHashMap<>();
         for (InspectWorkVo inspectWorkVo : inspectWorkVos) {
             List<String> project = new ArrayList<>();

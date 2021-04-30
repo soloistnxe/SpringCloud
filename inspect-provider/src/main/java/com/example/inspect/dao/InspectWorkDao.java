@@ -23,4 +23,6 @@ public interface InspectWorkDao {
 
     Boolean deleteWork(Integer workId);
 
+    InspectWork findByCompanyId(Integer companyId);
+
 }
