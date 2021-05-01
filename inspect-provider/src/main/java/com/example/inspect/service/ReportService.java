@@ -1,6 +1,7 @@
 package com.example.inspect.service;
 
 import com.example.inspect.Arithmetic.apriori.AprioriMyself;
+import com.example.inspect.Arithmetic.apriori.AssociationRules;
 import com.example.inspect.Arithmetic.knn.KNN;
 import com.example.inspect.Arithmetic.knn.KNNData;
 import com.example.inspect.common.Result;
@@ -208,7 +209,11 @@ public class ReportService {
             if(!list.isEmpty())
                 record.add(list);
         }
-        Map<String, Double> recommend = aprioriMyself.getRecommend(record);
+        List<AssociationRules> associationRules = aprioriMyself.getRecommend(record);
+        Map<String, Double> recommend = new HashMap<>();
+        for (AssociationRules associationRule : associationRules) {
+            recommend.put(associationRule.rulesExpress(),associationRule.getConfidence());
+        }
         // 以下是组合为前端页面显示的操作
         res.put("recommend",recommend);
         res.put("record",unqualified);

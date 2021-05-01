@@ -39,11 +39,11 @@ public class AprioriMyself {
         }
     }*/
 
-    public Map<String, Double> getRecommend(List<List<String>> data) {
+    public List<AssociationRules> getRecommend(List<List<String>> data) {
         record = data;
         Apriori();
-        System.out.println("频繁模式挖掘完毕。进行关联度挖掘，最小支持度百分比为：" + MIN_SUPPROT + "  最小置信度为：" + MIN_CONFIDENCE);
-        System.out.println(frequentItemset);
+        //System.out.println("频繁模式挖掘完毕。进行关联度挖掘，最小支持度百分比为：" + MIN_SUPPROT + "  最小置信度为：" + MIN_CONFIDENCE);
+        //System.out.println(frequentItemset);
         return AssociationRulesMining();//挖掘关联规则
     }
 
@@ -80,45 +80,45 @@ public class AprioriMyself {
     }
 
 
-    public  void Apriori()           /**实现apriori算法**/
+    public void Apriori()           /**实现apriori算法**/
     {
         //************获取候选1项集**************
-        System.out.println("第一次扫描后的1级 备选集CandidateItemset");
+        //System.out.println("第一次扫描后的1级 备选集CandidateItemset");
         List<List<String>> CandidateItemset = findFirstCandidate();
-        ShowData(CandidateItemset);
+       // ShowData(CandidateItemset);
 
 
         //************获取频繁1项集***************
-        System.out.println("第一次扫描后的1级 频繁集FrequentItemset");
+        //System.out.println("第一次扫描后的1级 频繁集FrequentItemset");
         List<List<String>> FrequentItemset = getSupprotedItemset(CandidateItemset);
         AddToFrequenceItem(FrequentItemset);//添加到所有的频繁项集中
         //控制台输出1项频繁集
-        ShowData(FrequentItemset);
+        //ShowData(FrequentItemset);
 
 
         //*****************************迭代过程**********************************
         times = 2;
         while (endTag != true) {
 
-            System.out.println("*******************************第" + times + "次扫描后备选集");
+            //System.out.println("*******************************第" + times + "次扫描后备选集");
             //**********连接操作****获取候选times项集**************
             List<List<String>> nextCandidateItemset = getNextCandidate(FrequentItemset);
             //输出所有的候选项集
-            ShowData(nextCandidateItemset);
+            //ShowData(nextCandidateItemset);
 
 
             /**************计数操作***由候选k项集选择出频繁k项集****************/
-            System.out.println("*******************************第" + times + "次扫描后频繁集");
+            //System.out.println("*******************************第" + times + "次扫描后频繁集");
             List<List<String>> nextFrequentItemset = getSupprotedItemset(nextCandidateItemset);
             AddToFrequenceItem(nextFrequentItemset);//添加到所有的频繁项集中
             //输出所有的频繁项集
-            ShowData(nextFrequentItemset);
+            //ShowData(nextFrequentItemset);
 
 
             //*********如果循环结束，输出最大模式**************
             if (endTag == true) {
-                System.out.println("\n\n\nApriori算法--->最大频繁集==================================");
-                ShowData(FrequentItemset);
+                //System.out.println("\n\n\nApriori算法--->最大频繁集==================================");
+                //ShowData(FrequentItemset);
                 frequentItemset = FrequentItemset;
             }
             //****************下一次循环初值********************
@@ -128,29 +128,27 @@ public class AprioriMyself {
     }
 
 
-    public  Map<String, Double> AssociationRulesMining()//关联规则挖掘
+    public  List<AssociationRules> AssociationRulesMining()//关联规则挖掘
     {
-        Map<String, Double> map = new LinkedHashMap<>();
+        List<AssociationRules> associationRulesList = new LinkedList<>();
         for (int i = 0; i < frequentItemset.size(); i++) {
             List<String> tem = frequentItemset.get(i);
             if (tem.size() > 1) {
                 List<String> temclone = new ArrayList<>(tem);
                 List<List<String>> AllSubset = getSubSet(temclone);//得到频繁项集tem的所有子集
                 for (int j = 0; j < AllSubset.size(); j++) {
-                    String res = "";
                     List<String> s1 = AllSubset.get(j);
                     List<String> s2 = gets2set(tem, s1);
                     double conf = isAssociationRules(s1, s2, tem);
                     if (conf > 0) {
-                        res += s1.toString() + "->" + s2.toString();
-                        map.put(res, conf);
+                        associationRulesList.add(new AssociationRules(s1,s2,conf));
                     }
 
                 }
             }
 
         }
-        return map;
+        return associationRulesList;
     }
 
 
@@ -322,8 +320,8 @@ public class AprioriMyself {
             }
         }
         endTag = end;//存在频繁项集则不会结束
-        if (endTag == true)
-            System.out.println("无满足支持度的" + times + "项集,结束连接");
+        //if (endTag == true)
+            //System.out.println("无满足支持度的" + times + "项集,结束连接");
         return supportedItemset;
     }
 

@@ -1,5 +1,7 @@
 package com.example.inspect.service;
 
+import com.example.inspect.Arithmetic.apriori.AprioriMyself;
+import com.example.inspect.Arithmetic.apriori.AssociationRules;
 import com.example.inspect.Arithmetic.knn.KNN;
 import com.example.inspect.Arithmetic.knn.KNNData;
 import com.example.inspect.common.Result;
@@ -63,8 +65,16 @@ public class RpcRecommendService {
                         // 获取不合格的项目列表
                         List<String> unqualifiedProject = inspectWorkVo.findUnqualifiedProject();
                         //获取Apriori推荐算法结果
-                        Result aprioriReport = reportService.getAprioriReport();
-                        Map<String,String> associationRules = (Map<String, String>) aprioriReport.getData().get("rpcRecommend");
+                        Map<String, List<String>> unqualified = inspectWorkService.unqualified();
+                        List<List<String>> record = new ArrayList<>();
+                        AprioriMyself aprioriMyself = new AprioriMyself();
+                        Set<String> strings = unqualified.keySet();
+                        for (String string : strings) {
+                            List<String> list = unqualified.get(string);
+                            if(!list.isEmpty())
+                                record.add(list);
+                        }
+                        List<AssociationRules> associationRules = aprioriMyself.getRecommend(record);
                         List<String> aprioriRecommend = getAprioriRecommend(unqualifiedProject, associationRules);
                         res.put("recommend",aprioriRecommend);
                         result.setCode(200);
@@ -132,19 +142,15 @@ public class RpcRecommendService {
         return new KNNData(knndata,"N/A");
     }
     // 获取最终推荐列表
-    private List<String> getAprioriRecommend(List<String> unqualifiedProject,Map<String,String> associationRules){
+    private List<String> getAprioriRecommend(List<String> unqualifiedProject,List<AssociationRules> associationRules){
         // 满足推荐规则的结果集
         List<String> satisfy = new LinkedList<>();
-        Set<String> rules = associationRules.keySet();
-        System.out.println("=================++++++++++++++");
-        System.out.println(unqualifiedProject.toString());
-        System.out.println(associationRules.toString());
-        for (String rule : rules) {
-            List<String> list = Arrays.asList(StringUtils.strip(rule,"[]").split(","));
-            if(isContainRules(unqualifiedProject,list)){
-                satisfy.addAll(Arrays.asList(associationRules.get(rule)));
-                System.out.println("推荐集++++");
-                System.out.println(satisfy);
+        logger.info("Apriori推荐RPC远程调用开始");
+        logger.info("检查不合格项目的集合:"+unqualifiedProject.toString());
+        logger.info("挖掘出的关联规则集合:"+associationRules.toString());
+        for (AssociationRules associationRule : associationRules) {
+            if(isContainRules(unqualifiedProject,associationRule.getFormerItem())){
+                satisfy.addAll(associationRule.getBehindItem());
             }
         }
         unqualifiedProject.addAll(satisfy);
@@ -152,15 +158,16 @@ public class RpcRecommendService {
         HashSet res = new HashSet(unqualifiedProject);
         List<String> aprioriRecommend = new LinkedList<>();
         aprioriRecommend.addAll(res);
+        logger.info("最终推荐列表:"+aprioriRecommend.toString());
         return aprioriRecommend;
     }
-    // 项集比较算法。判断项集中是否完全包含符合强关联规则的项
-    private boolean isContainRules(List<String> unqualifiedProject,List<String> rules){
+    // 项集比较算法。判断项集中是否完全包含符合强关联规则的前项
+    private boolean isContainRules(List<String> unqualifiedProject,List<String> formerItem){
         // 取交集，不改变原有集合
-        List<String> intersection = unqualifiedProject.stream().filter(item -> rules.contains(item)).collect(toList());
+        List<String> intersection = unqualifiedProject.stream().filter(item -> formerItem.contains(item)).collect(toList());
         // 判断交集是否和规则相同
         boolean equals = intersection.stream().sorted().collect(Collectors.joining())
-                .equals(rules.stream().sorted().collect(Collectors.joining()));
+                .equals(formerItem.stream().sorted().collect(Collectors.joining()));
         return equals;
     }
 
