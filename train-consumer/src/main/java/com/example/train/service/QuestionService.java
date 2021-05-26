@@ -2,13 +2,13 @@ package com.example.train.service;
 
 import com.example.train.common.Result;
 import com.example.train.dao.QuestionDao;
-import com.example.train.entity.Consumer;
+import com.example.train.entity.Question;
+import com.example.train.entity.QuestionType;
 import com.example.train.entity.dto.QuestionDto;
 import com.example.train.entity.vo.QuestionVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class QuestionService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public Result findPage(Integer pageNum, Integer pageSize, String query){
+    public Result findPage(Integer pageNum, Integer pageSize, String query) {
         Result result = new Result();
         Map<String, Object> map = new HashMap<>();
         List<QuestionDto> questionDtoList = new ArrayList<>();
@@ -62,7 +62,99 @@ public class QuestionService {
         return result;
     }
 
-    private List<QuestionVo> convertToQuestionVo(List<QuestionDto> questionDtos){
+    public Result findQuestionType(){
+        Result result = new Result();
+        Map<String, Object> map = new HashMap<>();
+        try {
+            List<QuestionType> questionType = questionDao.findQuestionType();
+            if(!questionType.isEmpty()){
+                map.put("questionType",questionType);
+                result.setData(map);
+                result.setMessage("查询题目类型列表成功");
+                logger.info("查询题目类型列表成功");
+            }else {
+                result.setCode(404);
+                result.setMessage("查询题目类型列表为空");
+                logger.warn("查询题目类型列表为空");
+            }
+        }catch (Exception e){
+            result.setCode(500);
+            result.setMessage("查询题目类型列表失败" +e);
+            logger.error("查询题目类型列表失败"+e);
+        }
+        return result;
+    }
+
+    public Result insertQuestion(QuestionVo questionVo) {
+        Result result = new Result();
+        Question question = convertToPo(questionVo);
+        try {
+            Boolean insertQuestion = questionDao.insertQuestion(question);
+            if (insertQuestion) {
+                result.setMessage("题目插入成功");
+                logger.info("题目插入成功");
+            }else {
+                result.setSuccess(false);
+                result.setCode(404);
+                result.setMessage("题目插入失败");
+                logger.error("题目插入失败");
+            }
+        } catch (Exception e) {
+            result.setSuccess(false);
+            result.setCode(500);
+            result.setMessage("题目插入失败,服务器异常" + e);
+            logger.error("题目插入失败,服务器异常" + e);
+        }
+        return result;
+    }
+
+    public Result updateQuestion(QuestionVo questionVo){
+        Result result = new Result();
+        Question question = convertToPo(questionVo);
+        try {
+            Boolean updateQuestion = questionDao.updateQuestion(question);
+            if (updateQuestion) {
+                result.setMessage("题目修改成功");
+                logger.info("题目修改成功");
+            }else {
+                result.setSuccess(false);
+                result.setCode(404);
+                result.setMessage("题目修改失败");
+                logger.error("题目修改失败");
+            }
+        }catch (Exception e){
+            result.setSuccess(false);
+            result.setCode(500);
+            result.setMessage("题目修改失败,服务器异常" + e);
+            logger.error("题目修改失败,服务器异常" + e);
+        }
+        return result;
+    }
+
+    public Result deleteQuestion(Integer questionId){
+        Result result = new Result();
+        try {
+            Boolean deleteQuestion = questionDao.deleteQuestion(questionId);
+            if (deleteQuestion) {
+                result.setMessage("题目删除成功");
+                logger.info("题目删除成功");
+            }else {
+                result.setSuccess(false);
+                result.setCode(404);
+                result.setMessage("题目删除失败");
+                logger.error("题目删除失败");
+            }
+        }catch (Exception e){
+            result.setSuccess(false);
+            result.setCode(500);
+            result.setMessage("题目删除失败,服务器异常" + e);
+            logger.error("题目删除失败,服务器异常" + e);
+        }
+        return result;
+    }
+
+
+    private List<QuestionVo> convertToQuestionVo(List<QuestionDto> questionDtos) {
         List<QuestionVo> questionVos = new ArrayList<>();
         for (QuestionDto questionDto : questionDtos) {
             QuestionVo questionVo = new QuestionVo();
@@ -81,4 +173,20 @@ public class QuestionService {
         }
         return questionVos;
     }
+
+    private Question convertToPo(QuestionVo questionVo) {
+        Question question = new Question();
+        question.setQuestionId(questionVo.getQuestionId());
+        question.setQuestionName(questionVo.getQuestionName());
+        List<String> questionOption = questionVo.getQuestionOption();
+        StringBuilder option = new StringBuilder();
+        for (String s : questionOption) {
+            option.append(s).append("#");
+        }
+        question.setQuestionOption(option.toString());
+        question.setQuestionType(questionVo.getQuestionTypeId());
+        question.setAnswer(questionVo.getAnswer());
+        return question;
+    }
+
 }

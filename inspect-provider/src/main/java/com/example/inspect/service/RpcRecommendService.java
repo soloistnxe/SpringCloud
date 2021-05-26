@@ -57,7 +57,7 @@ public class RpcRecommendService {
                     // 不包含不合格项目，走KNN算法推荐
                     if(!flag){
                         List<String> knnRecommend = getKnnRecommend(inspectWorkVo);
-                        res.put("recommend",knnRecommend);
+                        res.put("recommend",StringUtils.strip(knnRecommend.toString(), "[]"));
                         result.setCode(200);
                         result.setMessage("Knn算法推荐成功");
                         result.setData(res);
@@ -76,7 +76,7 @@ public class RpcRecommendService {
                         }
                         List<AssociationRules> associationRules = aprioriMyself.getRecommend(record);
                         List<String> aprioriRecommend = getAprioriRecommend(unqualifiedProject, associationRules);
-                        res.put("recommend",aprioriRecommend);
+                        res.put("recommend",StringUtils.strip(aprioriRecommend.toString(), "[]"));
                         result.setCode(200);
                         result.setMessage("Apriori算法推荐成功");
                         result.setData(res);
@@ -101,9 +101,11 @@ public class RpcRecommendService {
 
     private List<String> getKnnRecommend(InspectWorkVo inspectWorkVo){
         KNNData sample = convertToKnnSample(inspectWorkVo);
+        logger.info("Knn推荐RPC远程调用开始");
         List<KNNData> knnData = inspectWorkService.getKnnData();
         String recommend = KNN.knnCal(3, sample, knnData);
         String[] split = recommend.split(";");
+        logger.info("最终推荐列表:"+split.toString());
         return Arrays.asList(split);
     }
 
@@ -169,30 +171,5 @@ public class RpcRecommendService {
         boolean equals = intersection.stream().sorted().collect(Collectors.joining())
                 .equals(formerItem.stream().sorted().collect(Collectors.joining()));
         return equals;
-    }
-
-
-    public static void main(String[] args) {
-        List<String> str1 = new ArrayList<>();
-        List<String> str2 = new ArrayList<>();
-
-        str1.add("进货查验结果");
-        str1.add("不合格品管理和食品召回");
-
-
-
-        str2.add("不合格品管理和食品召回");
-        str2.add("进货查验结果");
-
-
-        List<String> intersection = str1.stream().filter(item -> str2.contains(item)).collect(toList());
-        boolean equals = intersection.stream().sorted().collect(Collectors.joining())
-                .equals(str2.stream().sorted().collect(Collectors.joining()));
-        System.out.println(intersection.toString());
-        System.out.println(equals);
-        System.out.println(str1.toString());
-        System.out.println(str2.toString());
-
-
     }
 }

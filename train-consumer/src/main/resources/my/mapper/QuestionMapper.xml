@@ -7,7 +7,7 @@
         SELECT
           *
         FROM
-          train_consumer
+          train_question
     </select>
 
     <select id="findById" resultType="Question">
@@ -39,32 +39,37 @@
          question_name  like concat('%',#{query},'%')
     </select>
 
-    <insert id="insertConsumer" parameterType="Question">
+    <select id="findQuestionType" resultType="QuestionType">
+        SELECT
+          *
+        FROM
+          train_question_type
+    </select>
+    <insert id="insertQuestion" parameterType="Question">
         INSERT
         INTO
-          train_consumer(consumer_name,consumer_phone,password,consumer_company,consumer_type)
+          train_question (question_name,question_option,answer,question_type)
         VALUES
-          (#{consumerName},#{consumerPhone},#{password},#{consumerCompany},#{consumerType})
+          (#{questionName},#{questionOption},#{answer},#{questionType})
 
     </insert>
 
-    <update id="update" parameterType="Question">
+    <update id="updateQuestion" parameterType="Question">
         UPDATE
-         train_consumer
+         train_question
         SET
-         consumer_name = #{consumerName},
-         consumer_phone = #{consumerPhone},
-         password = #{password},
-         consumer_company = #{consumerCompany},
-         consumer_type = #{consumerType}
+          question_name  = #{questionName},
+          question_option = #{questionOption},
+          answer = #{answer},
+          question_type = #{questionType}
         WHERE
-         consumer_id = #{consumerId}
+         question_id = #{questionId}
     </update>
-    <delete id="delete" parameterType="Integer">
+    <delete id="deleteQuestion" parameterType="Integer">
         DELETE
         FROM
-          train_consumer
+          train_question
         WHERE
-          consumer_id = #{consumerId}
+          question_id = #{questionId}
     </delete>
 </mapper>

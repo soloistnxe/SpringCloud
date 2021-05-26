@@ -48,7 +48,7 @@ public class ConsumerService {
         } catch (Exception e) {
             result.setSuccess(false);
             result.setCode(500);
-            result.setMessage("服务器异常"+e);
+            result.setMessage("服务器异常" + e);
             logger.error("服务器异常" + e);
         }
         return result;
@@ -85,37 +85,37 @@ public class ConsumerService {
         return result;
     }
 
-    public Result insertConsumer(Consumer consumer){
+    public Result insertConsumer(Consumer consumer) {
         Result result = new Result();
         try {
             Boolean insertConsumer = consumerDao.insertConsumer(consumer);
-            if(insertConsumer){
+            if (insertConsumer) {
                 result.setMessage("用户创建成功");
                 logger.info("用户创建成功");
-            }else {
+            } else {
                 result.setSuccess(false);
                 result.setCode(500);
                 result.setMessage("用户创建失败");
                 logger.info("用户创建失败");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setSuccess(false);
             result.setCode(500);
-            result.setMessage("创建失败" + e);
-            logger.info("创建失败");
+            result.setMessage("用户创建失败" + e);
+            logger.info("用户创建失败" + e);
         }
         return result;
     }
 
-    public Result update(Consumer consumer){
+    public Result update(Consumer consumer) {
         Result result = new Result();
         try {
             Boolean update = consumerDao.update(consumer);
-            if(update){
+            if (update) {
                 result.setMessage("修改用户成功");
                 logger.info("修改用户成功");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setSuccess(false);
             result.setCode(500);
             result.setMessage("修改用户失败" + e);
@@ -124,15 +124,15 @@ public class ConsumerService {
         return result;
     }
 
-    public Result delete(Integer consumerId){
+    public Result delete(Integer consumerId) {
         Result result = new Result();
         try {
             Boolean delete = consumerDao.delete(consumerId);
-            if(delete){
+            if (delete) {
                 result.setMessage("删除用户成功");
                 logger.info("删除用户成功");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setSuccess(false);
             result.setCode(500);
             result.setMessage("删除用户失败" + e);

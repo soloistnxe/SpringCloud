@@ -5,10 +5,7 @@ import com.example.train.dao.ConsumerDao;
 import com.example.train.entity.Consumer;
 import com.example.train.service.ConsumerService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -59,8 +56,8 @@ public class ConsumerController {
     public Result update(Consumer consumer){
         return consumerService.update(consumer);
     }
-    @RequestMapping("/deleteConsumer")
-    public Result delete(Integer consumerId){
+    @RequestMapping("/deleteConsumer/{consumerId}")
+    public Result delete(@PathVariable(value = "consumerId") Integer consumerId){
         return consumerService.delete(consumerId);
     }
 
