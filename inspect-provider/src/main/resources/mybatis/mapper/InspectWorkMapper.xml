@@ -54,9 +54,9 @@
     <insert id="insertWork" parameterType="InspectWork">
         INSERT
         INTO
-          inspect_work(company_name,product_type,audit_type)
+          inspect_work(company_id,company_name,product_type,audit_type)
         VALUES
-          (#{companyName},#{productType},#{auditType})
+          (#{companyId},#{companyName},#{productType},#{auditType})
     </insert>
 
     <update id="updateWork" parameterType="InspectWork">

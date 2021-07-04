@@ -54,7 +54,7 @@ public class ReportController {
     }
 
     /**
-     * K近邻算法推荐，还在开发中
+     * K近邻算法推荐
      * @return
      */
     @RequestMapping("/knn")
